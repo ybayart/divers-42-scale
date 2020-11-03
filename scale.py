@@ -34,8 +34,6 @@ rating = {
 for data in datas:
 	questions = dict()
 	for question in data["questions_with_answers"]:
-		if question['rating'] != 'bool':
-			print(question)
 		questions[question["id"]] = {
 			"name": question["name"],
 			"guide": question["guidelines"],
