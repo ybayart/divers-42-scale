@@ -27,14 +27,21 @@ payload = {
 }
 datas = req_42api('/v2/projects/{}/scale_teams'.format(project), payload=payload, size=1, nb_result=1)
 
+rating = {
+	'bool': "[ {} | {} ]".format(green('Yes'), red('No')),
+	'multi': "[{0}--{0}--{0}--{0}--{0}--{0}]".format(pink('#'))
+}
 for data in datas:
 	questions = dict()
 	for question in data["questions_with_answers"]:
+		if question['rating'] != 'bool':
+			print(question)
 		questions[question["id"]] = {
 			"name": question["name"],
-			"guide": question["guidelines"]
+			"guide": question["guidelines"],
+			"rating": question["rating"]
 		}
 	for question in sorted(questions):
-		print(questions[question]["name"])
-		print(questions[question]["guide"])
+		print(yellow(questions[question]["name"]), rating[questions[question]["rating"]])
+		print(blue(questions[question]["guide"]))
 		print("")
