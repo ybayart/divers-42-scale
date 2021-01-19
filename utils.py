@@ -8,8 +8,18 @@ def blue(str): return "\033[94m{}\033[0m".format(str)
 def pink(str): return "\033[95m{}\033[0m".format(str)
 
 url = "https://api.intra.42.fr"
+errors = []
 client = os.environ.get('API42_CLIENT')
+if client == None:
+	errors.append("env API42_CLIENT not set :(")
 secret = os.environ.get('API42_SECRET')
+if secret == None:
+	errors.append("env API42_SECRET not set :(")
+if len(errors) > 0:
+	for error in errors:
+		print(red(error))
+	exit(1)
+
 access_token = requests.post("{}/oauth/token?grant_type=client_credentials&client_id={}&client_secret={}".format(url, client, secret)).json()["access_token"]
 
 def req_42api(path, payload=dict(), size=100, nb_result=0, number=1):
