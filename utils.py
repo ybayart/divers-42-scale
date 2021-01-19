@@ -12,14 +12,14 @@ client = os.environ.get('API42_CLIENT')
 secret = os.environ.get('API42_SECRET')
 access_token = requests.post("{}/oauth/token?grant_type=client_credentials&client_id={}&client_secret={}".format(url, client, secret)).json()["access_token"]
 
-def req_42api(path, payload=dict(), size=100, nb_result=0):
+def req_42api(path, payload=dict(), size=100, nb_result=0, number=1):
 	global access_token
 	loop = 1
 	datas = []
 	internal_payload = {
 		'page':
 		{
-			'number': 1,
+			'number': number,
 			'size': size
 		}
 	}
@@ -32,10 +32,13 @@ def req_42api(path, payload=dict(), size=100, nb_result=0):
 			time.sleep(float(req.headers["Retry-After"]))
 		elif req.status_code == 200:
 			datas += req.json()
-			if (int(req.headers["X-Page"]) * int(req.headers["X-Per-Page"]) >= int(req.headers["X-Total"]) or
+			if (nb_result == -1 or
+				int(req.headers["X-Page"]) * int(req.headers["X-Per-Page"]) >= int(req.headers["X-Total"]) or
 				(nb_result > 0 and int(req.headers["X-Page"]) * int(req.headers["X-Per-Page"]) >= nb_result)):
 				loop = 0
 			calc_payload['page']['number'] += 1
 		elif req.status_code == 401:
 			access_token = requests.post("{}/oauth/token?grant_type=client_credentials&client_id={}&client_secret={}".format(url, client, secret)).json()["access_token"]
+		elif req.status_code == 404:
+			return False
 	return datas

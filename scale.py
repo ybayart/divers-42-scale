@@ -6,6 +6,9 @@ import json
 user = input('42 login: ')
 
 req_projects = req_42api('/v2/users/{}/projects_users'.format(user))
+if (req_projects == False):
+	print(red("User not found :("))
+	exit(1)
 projects = dict()
 
 for project in req_projects:
@@ -29,7 +32,11 @@ payload = {
 i = 1
 loop = True
 while loop:
-	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), payload=payload, size=100, nb_result=i)
+#	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), payload=payload, size=100, nb_result=i)
+	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), size=100, nb_result=-1, number=i)
+	if len(datas) == 0:
+		print(red("No scale found :("))
+		exit(1)
 	for data in datas:
 		if data["questions_with_answers"]:
 			loop = False
