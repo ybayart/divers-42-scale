@@ -1,4 +1,4 @@
-import requests, time, os
+import requests, time, os, inquirer
 
 # COLORS
 def red(str): return "\033[91m{}\033[0m".format(str)
@@ -52,3 +52,12 @@ def req_42api(path, payload=dict(), size=100, nb_result=0, number=1):
 		elif req.status_code == 404:
 			return False
 	return datas
+
+def print_inquirer(message="Select a choice", choices=[]):
+	questions = [
+		inquirer.List('action',
+			message=message,
+			choices=choices,
+		),
+	]
+	return inquirer.prompt(questions, raise_keyboard_interrupt=True)['action']

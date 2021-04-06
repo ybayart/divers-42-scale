@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 from utils import *
-import json
+import json, datetime
 
 user = input('42 login: ')
 
@@ -12,15 +12,24 @@ if (req_projects == False):
 projects = dict()
 
 for project in req_projects:
-	projects[project['project']['name']] = project['project']['id']
-
-for project in sorted(projects):
-	print("{}: {}".format(yellow(project), blue(projects[project])))
+	date = datetime.datetime.strptime(project['teams'][0]['created_at'].split('.')[0], '%Y-%m-%dT%H:%M:%S')
+	projects[yellow(date) + ': ' + blue(project['project']['name'])] = project['project']['id']
 
 try:
-	project = int(input('?> '))
-except:
-	print('This is not a valid number')
+	project = print_inquirer("Select a project", sorted(projects, reverse=True))
+except TypeError:
+	exit(0)
+except KeyboardInterrupt:
+	exit(0)
+try:
+	if project in projects:
+		project_name = project
+		project = projects[project_name]
+		print('Fetching correction scale for:', blue(project_name), '-', yellow(project), '\n')
+	else:
+		print(red('Select a valid project!'))
+		exit(1)
+except KeyboardInterrupt:
 	exit(1)
 
 payload = {
@@ -32,7 +41,6 @@ payload = {
 i = 1
 loop = True
 while loop:
-#	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), payload=payload, size=100, nb_result=i)
 	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), size=100, nb_result=-1, number=i)
 	if len(datas) == 0:
 		print(red("No scale found :("))
