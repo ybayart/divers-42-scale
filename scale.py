@@ -5,6 +5,8 @@ import json, datetime
 
 user = input('42 login: ')
 
+print('')
+
 req_projects = req_42api('/v2/users/{}/projects_users'.format(user))
 if (req_projects == False):
 	print(red("User not found :("))
