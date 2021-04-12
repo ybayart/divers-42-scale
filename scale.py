@@ -14,8 +14,9 @@ if (req_projects == False):
 projects = dict()
 
 for project in req_projects:
-	date = datetime.datetime.strptime(project['teams'][0]['created_at'].split('.')[0], '%Y-%m-%dT%H:%M:%S')
-	projects[yellow(date) + ': ' + blue(project['project']['name'])] = project['project']['id']
+	if len(project['teams']) > 0:
+		date = datetime.datetime.strptime(project['teams'][0]['created_at'].split('.')[0], '%Y-%m-%dT%H:%M:%S')
+		projects[yellow(date) + ': ' + blue(project['project']['name'])] = project['project']['id']
 
 try:
 	project = print_inquirer("Select a project", sorted(projects, reverse=True))
