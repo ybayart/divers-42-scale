@@ -44,7 +44,7 @@ payload = {
 i = 1
 loop = True
 while loop:
-	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), size=100, nb_result=-1, number=i)
+	datas = req_42api('/v2/projects/{}/scale_teams'.format(project), payload=payload, size=100, nb_result=-1, number=i)
 	if len(datas) == 0:
 		print(red("No scale found :("))
 		exit(1)
